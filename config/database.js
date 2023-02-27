@@ -5,4 +5,6 @@ const db = new Sequelize("sizinbps", "root", "", {
   dialect: "mysql",
 });
 
+// jangan goblok
+
 export default db;
