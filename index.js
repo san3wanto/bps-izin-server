@@ -51,6 +51,6 @@ app.use(AuthRoute);
 
 // store.sync(); //memambahkan session ke database, nonaktifkan setelah berhasil menambahkan
 
-app.listen(process.env.APP_PORT || PORT, () => {
+app.listen(process.env.APP_PORT || 3000, () => {
   console.log("Server up and running...");
 });
