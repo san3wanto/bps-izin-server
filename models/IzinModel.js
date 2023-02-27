@@ -15,12 +15,18 @@ const Izin = db.define(
         notEmpty: true,
       },
     },
-    name: {
+    ket: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true,
-        len: [3, 100],
+      },
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
       },
     },
     userId: {

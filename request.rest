@@ -1,0 +1,124 @@
+//Create a admin
+###
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "name": "Administrator",
+    "username": "admin1",
+    "email": "admin@mail.com",
+    "nip" : "111111111111111111",
+    "jab" : "Admin",
+    "password": "111111",
+    "confPassword": "111111",
+    "role": "admin",
+    "status": "tersedia"
+}
+
+//Create a user
+###
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "name": "Zaki Mirza",
+    "email": "Zaki@gmail.com",
+    "nip" : "199856789123456789",
+    "jab" : "Magang Untad",
+    "password": "321321",
+    "confPassword": "321321",
+    "role": "user"
+}
+
+### 
+//get all user
+GET http://localhost:5000/users
+
+###
+//get single user
+GET http://localhost:5000/users/3d92d900-c7a6-42e2-b0ea-772c1acadb11
+
+###
+//update data
+PATCH http://localhost:5000/users/3d92d900-c7a6-42e2-b0ea-772c1acadb11
+Content-Type: application/json
+
+{
+    "name": "Ahmad Fuad",
+    "email": "fuad99@gmail.com",
+    "password": "123123",
+    "confPassword": "123123",
+    "role": "admin"
+}
+###
+PATCH http://localhost:5000/users/3d92d900-c7a6-42e2-b0ea-772c1acadb11/status
+Content-Type: application/json
+
+###
+//delete user
+DELETE  http://localhost:5000/users/7f9472c7-4456-4259-90a7-aa12eb8c1821
+
+###
+//login admin
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "username": "admin1",
+    "password": "111111"
+}
+
+###
+//login user
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email": "zaki@gmail.com",
+    "password": "321321"
+}
+
+###
+//me
+GET http://localhost:5000/me
+
+###
+//logout
+DELETE http://localhost:5000/logout
+
+### 
+//get all izin
+GET http://localhost:5000/izin
+
+###
+//get single zin
+GET http://localhost:5000/izin/699cbd5e-253d-4493-b30d-4215a5eef7f7
+
+###
+//Create izin
+POST http://localhost:5000/izin
+Content-Type: application/json
+
+{
+    "ket": "Rapat di situ Lagi",
+    "status": "Belum Selesai"
+}
+
+###
+//update data izin
+PATCH  http://localhost:5000/izin/5f1afa98-ddd2-4a80-9de7-eefc5441795b
+Content-Type: application/json
+
+{
+    "ket": "Tugas",
+}
+
+###
+//selesai izin
+PATCH  http://localhost:5000/izin/d1fbdc52-3359-405d-949d-7bb42722ba1a/finish
+Content-Type: application/json
+
+###
+//hapus data izin
+DELETE   http://localhost:5000/izin/7e3dbeb7-1495-4025-bb33-9e88d1c05ec0
+Content-Type: application/json

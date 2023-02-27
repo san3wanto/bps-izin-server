@@ -5,9 +5,9 @@ import { Op } from "sequelize";
 export const getIzin = async (req, res) => {
   try {
     let response;
-    if (req.role == "admin" || "user") {
+    if (req.role == "admin") {
       response = await Izin.findAll({
-        attributes: ["uuid", "name", "createdAt"],
+        attributes: ["uuid", "ket", "status", "createdAt", "updatedAt", "userId"],
         include: [
           {
             model: User,
@@ -17,7 +17,7 @@ export const getIzin = async (req, res) => {
       });
     } else {
       response = await Izin.findAll({
-        attributes: ["uuid", "name", "createdAt"],
+        attributes: ["uuid", "ket", "status", "createdAt", "updatedAt"],
         where: {
           userId: req.userId,
         },
@@ -46,7 +46,7 @@ export const getIzinById = async (req, res) => {
     let response;
     if (req.role == "admin") {
       response = await Izin.findOne({
-        attributes: ["uuid", "name", "createdAt"],
+        attributes: ["uuid", "ket", "status", "createdAt"],
         where: {
           id: izin.id,
         },
@@ -59,7 +59,7 @@ export const getIzinById = async (req, res) => {
       });
     } else {
       response = await Izin.findOne({
-        attributes: ["uuid", "name", "createdAt"],
+        attributes: ["uuid", "ket", "status", "createdAt"],
         where: {
           [Op.and]: [{ id: izin.id }, { userId: req.userId }],
         },
@@ -78,11 +78,12 @@ export const getIzinById = async (req, res) => {
 };
 
 export const createIzin = async (req, res) => {
-  const { name } = req.body;
+  const { ket, status } = req.body;
   try {
     await Izin.create({
-      name: name,
+      ket: ket,
       userId: req.userId,
+      status: "Belum",
     });
     res.status(201).json({ msg: "Izin telah ditambahkan" });
   } catch (error) {
@@ -98,10 +99,10 @@ export const updateIzin = async (req, res) => {
       },
     });
     if (!izin) return res.status(404).json({ msg: "Data tidak ditemukan" });
-    const { name } = req.body;
+    const { ket } = req.body;
     if (req.role == "admin") {
       await Izin.update(
-        { name },
+        { ket },
         {
           where: {
             id: izin.id,
@@ -111,7 +112,7 @@ export const updateIzin = async (req, res) => {
     } else {
       if (req.userId !== izin.userId) return res.status(403).json({ msg: "akses ditolak" });
       await Izin.update(
-        { name },
+        { ket },
         {
           where: {
             [Op.and]: [{ id: izin.id }, { userId: req.userId }],
@@ -124,6 +125,42 @@ export const updateIzin = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
+
+export const finsihIzin = async (req, res) => {
+  const izin = await Izin.findOne({
+    where: {
+      uuid: req.params.id,
+    },
+  });
+  if (!izin) return res.status(404).json({ msg: "Data tidak ditemukan" });
+  const { status } = req.body;
+  try {
+    if (izin.status === "Belum") {
+      await Izin.update(
+        { status: "Selesai" },
+        {
+          where: {
+            id: izin.id,
+          },
+        }
+      );
+      res.status(200).json({ msg: "Izin telah selesai" });
+    } else {
+      await Izin.update(
+        { status: "Belum" },
+        {
+          where: {
+            id: izin.id,
+          },
+        }
+      );
+      res.status(200).json({ msg: "Izin belum selesai" });
+    }
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
+  }
+};
+
 export const deleteIzin = async (req, res) => {
   try {
     const izin = await Izin.findOne({

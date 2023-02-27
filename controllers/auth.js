@@ -7,7 +7,7 @@ import session from "express-session";
 export const Login = async (req, res) => {
   const user = await Users.findOne({
     where: {
-      email: req.body.email, //mencari berdasarkan email
+      username: req.body.username, //mencari berdasarkan email
     },
   });
   if (!user) return res.status(404).json({ msg: "User tidak ditemukan" });
@@ -16,13 +16,16 @@ export const Login = async (req, res) => {
   if (!match) return res.status(400).json({ msg: "Password Salah" });
   // jika cocok ankan mencari sessionnya
   req.session.userId = user.uuid;
+  user.status = "Tersedia";
   const uuid = user.uuid;
   const name = user.name;
+  const username = user.username;
   const nip = user.nip;
   const email = user.email;
   const jab = user.jab;
   const role = user.role;
-  res.status(200).json({ uuid, name, nip, email, role, jab });
+  const status = user.status;
+  res.status(200).json({ uuid, name, nip, email, role, jab, status });
 };
 
 //fungsi untuk get user login, berguna untuk frontend
@@ -32,7 +35,7 @@ export const Me = async (req, res) => {
   }
   //kemudian mengambil user dari datbase
   const user = await Users.findOne({
-    attributes: ["uuid", "name", "nip", "email", "role", "jab"],
+    attributes: ["uuid", "name", "nip", "username", "email", "role", "jab", "status"],
     where: {
       uuid: req.session.userId, //mencari user berdasarkan uuid, karena session yang terset adalah uuid
     },

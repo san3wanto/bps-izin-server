@@ -22,6 +22,15 @@ const Users = db.define(
         len: [3, 100],
       },
     },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        notEmpty: true,
+        len: [3, 50],
+      },
+    },
     nip: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -35,7 +44,6 @@ const Users = db.define(
       allowNull: false,
       validate: {
         notEmpty: true,
-        len: [10, 50],
       },
     },
     email: {
@@ -54,6 +62,13 @@ const Users = db.define(
       },
     },
     role: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    status: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {

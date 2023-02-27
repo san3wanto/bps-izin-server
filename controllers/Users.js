@@ -4,7 +4,7 @@ import argon2 from "argon2"; // import argon untuk menghash password
 export const getUser = async (req, res) => {
   try {
     const response = await User.findAll({
-      attributes: ["uuid", "name", "nip", "jab", "email", "role"],
+      attributes: ["uuid", "name", "nip", "username", "jab", "email", "role", "status"],
     });
     res.status(200).json(response);
   } catch (error) {
@@ -15,7 +15,7 @@ export const getUser = async (req, res) => {
 export const getUserById = async (req, res) => {
   try {
     const response = await User.findOne({
-      attributes: ["uuid", "name", "nip", "jab", "email", "role"],
+      attributes: ["uuid", "name", "nip", "username", "jab", "email", "role", "status"],
       where: {
         uuid: req.params.id,
       },
@@ -27,7 +27,7 @@ export const getUserById = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-  const { name, nip, email, jab, password, confPassword, role } = req.body;
+  const { name, nip, email, username, jab, password, confPassword, role, status } = req.body;
   if (password !== confPassword) return res.status(400).json({ msg: "Password dan Confirm tidak cocok" });
   const hashPassword = await argon2.hash(password);
   try {
@@ -35,9 +35,11 @@ export const createUser = async (req, res) => {
       name: name,
       nip: nip,
       email: email,
+      username: username,
       jab: jab,
       password: hashPassword,
       role: role,
+      status: "Tersedia",
     });
     res.status(201).json({ msg: "Register berhasil" });
   } catch (error) {
@@ -66,6 +68,7 @@ export const updateUser = async (req, res) => {
         name: name,
         nip: nip,
         email: email,
+        username: username,
         jab: jab,
         password: hashPassword,
         role: role,
@@ -81,6 +84,46 @@ export const updateUser = async (req, res) => {
     res.status(400).json({ msg: error.message });
   }
 };
+
+export const updateUserStatus = async (req, res) => {
+  const user = await User.findOne({
+    where: {
+      uuid: req.params.id,
+    },
+  });
+  if (!user) return res.status(404).json({ msg: "User tidak ditemukan" });
+  const { status } = req.body;
+  try {
+    if (user.status === "Izin") {
+      await User.update(
+        {
+          status: "Tersedia",
+        },
+        {
+          where: {
+            id: user.id,
+          },
+        }
+      );
+      res.status(200).json({ msg: "User Tersedia di Kantor" });
+    } else {
+      await User.update(
+        {
+          status: "Izin",
+        },
+        {
+          where: {
+            id: user.id,
+          },
+        }
+      );
+      res.status(200).json({ msg: "User sedang Izin" });
+    }
+  } catch (error) {
+    res.status(400).json({ msg: error.message });
+  }
+};
+
 export const deleteUser = async (req, res) => {
   const user = await User.findOne({
     where: {
